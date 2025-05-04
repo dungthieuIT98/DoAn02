@@ -1,0 +1,66 @@
+﻿@model IEnumerable<DoAn.Models.TinTuc>
+
+@{
+    ViewBag.Title = "Tin Tức";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    int pageSize = 9;
+    int totalItems = Model.Count();
+    int totalPages = (int)Math.Ceiling((double)totalItems / pageSize);
+    int currentPage = ViewBag.CurrentPage ?? 1;
+}
+
+<div class="container mt-4">
+    <h2 class="text-center mb-4">Tin Tức</h2>
+    
+    <div class="row">
+        @foreach (var item in Model.Skip((currentPage - 1) * pageSize).Take(pageSize))
+        {
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    <img src="@Url.Content("~/wwwroot/tintuc/" + item.hinhanh)" class="card-img-top" alt="@item.tieude" style="height: 200px; object-fit: cover;">
+                    <div class="card-body">
+                        <h5 class="card-title">@item.tieude</h5>
+                        <p class="card-text">
+                            <small class="text-muted">
+                                Ngày đăng: @item.ngaytao.ToString("dd/MM/yyyy")
+                            </small>
+                        </p>
+                        <a href="@Url.Action("ChiTietTinTuc", "Home", new { id = item.matintuc })" class="btn btn-primary">Xem chi tiết</a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    @if (totalPages > 1)
+    {
+        <nav aria-label="Page navigation" class="mt-4">
+            <ul class="pagination justify-content-center">
+                @if (currentPage > 1)
+                {
+                    <li class="page-item">
+                        <a class="page-link" href="@Url.Action("TinTuc", new { page = currentPage - 1 })" aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+                }
+
+                @for (int i = 1; i <= totalPages; i++)
+                {
+                    <li class="page-item @(i == currentPage ? "active" : "")">
+                        <a class="page-link" href="@Url.Action("TinTuc", new { page = i })">@i</a>
+                    </li>
+                }
+
+                @if (currentPage < totalPages)
+                {
+                    <li class="page-item">
+                        <a class="page-link" href="@Url.Action("TinTuc", new { page = currentPage + 1 })" aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+                }
+            </ul>
+        </nav>
+    }
+</div>

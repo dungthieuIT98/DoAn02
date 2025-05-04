@@ -1,0 +1,38 @@
+@model DoAn.Models.TinTuc
+@{
+    ViewBag.Title = Model.tieude;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <article class="news-detail">
+                <h1 class="mb-4">@Model.tieude</h1>
+                
+                <div class="news-meta mb-4">
+                    <span class="text-muted">
+                        <i class="fas fa-calendar"></i  >Ngày đăng: @Model.ngaytao.ToString("dd/MM/yyyy")
+                    </span>
+                    <span class="mx-2">|</span>
+                    <span class="text-muted">
+                        <i class="fas fa-user"></i> Người đăng: @Model.KhachHang.hoten
+                    </span>
+                </div>
+
+                <div class="news-image mb-4">
+                    <img src="@Url.Content("~/wwwroot/tintuc/" + Model.hinhanh)" class="img-fluid rounded" alt="@Model.tieude">
+                </div>
+
+                <div class="news-content">
+                    @Html.Raw(Model.noidung)
+                </div>
+ 
+                <div class="mt-4">
+                    <a href="@Url.Action("TinTuc", "Home")" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Quay lại danh sách tin tức
+                    </a>
+                </div>
+            </article>
+        </div>
+    </div>
+</div> 

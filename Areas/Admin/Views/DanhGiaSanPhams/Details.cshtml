@@ -1,0 +1,54 @@
+@model DoAn.Models.DanhGiaSanPham
+
+@{
+    ViewBag.Title = "Chi tiết đánh giá";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">Chi tiết đánh giá</h3>
+        <div class="card-tools">
+            <a href="@Url.Action("Index")" class="btn btn-default">
+                <i class="fas fa-arrow-left"></i> Quay lại
+            </a>
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label>Sản phẩm:</label>
+                    <p class="form-control-static">@Model.SanPham.tensp</p>
+                </div>
+                <div class="form-group">
+                    <label>Người dùng:</label>
+                    <p class="form-control-static">@Model.KhachHang.email</p>
+                </div>
+                <div class="form-group">
+                    <label>Điểm đánh giá:</label>
+                    <div class="rating">
+                        @for (int i = 1; i <= 5; i++)
+                        {
+                            <i class="fas fa-star @(i <= Model.DiemDanhGia ? "text-warning" : "text-muted")"></i>
+                        }
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label>Ngày đánh giá:</label>
+                    <p class="form-control-static">@Model.NgayDanhGia.ToString("dd/MM/yyyy HH:mm")</p>
+                </div>
+                <div class="form-group">
+                    <label>Nội dung đánh giá:</label>
+                    <div class="card">
+                        <div class="card-body">
+                            @Model.NoiDungDanhGia
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 

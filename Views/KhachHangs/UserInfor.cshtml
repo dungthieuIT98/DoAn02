@@ -1,0 +1,94 @@
+﻿@{
+    ViewBag.Title = "UserInfor";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var kh = Session["taikhoan"] as DoAn.Models.KhachHang;
+}
+
+<main class="main">
+    <nav aria-label="breadcrumb" class="breadcrumb-nav">
+    </nav>
+
+    <div class="page-content">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Thông tin tài khoản</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Họ tên</label>
+                                        <input type="text" class="form-control" value="@kh.hoten" readonly>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Email</label>
+                                        <input type="email" class="form-control" value="@kh.email" readonly>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Điện thoại</label>
+                                        <input type="text" class="form-control" value="@kh.dienthoai" readonly>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Mật khẩu</label>
+                                        <input type="password" class="form-control" value="@kh.matkhau" readonly>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Địa chỉ</label>
+                                <input type="text" class="form-control" value="@kh.thon, @kh.xa, @kh.huyen, @kh.tinh" readonly>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Trạng thái</label>
+                                        <input type="text" class="form-control" value="@(kh.trangthai == true ? "Khóa" : "Hoạt động")" readonly>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Chức vụ</label>
+                                        <input type="text" class="form-control" value="@(kh.chucvu == true ? "Nhân viên" : "Khách hàng")" readonly>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Ngày đăng ký</label>
+                                <input type="text" class="form-control" value="@kh.ngaydangky.ToString("dd/MM/yyyy")" readonly>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Thống kê</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="form-group">
+                                <label>Số đơn hàng</label>
+                                <input type="text" class="form-control" value="@kh.DonHangs.Count" readonly>
+                            </div>
+                            <div class="form-group">
+                                <label>Số sản phẩm trong giỏ hàng</label>
+                                <input type="text" class="form-control" value="@kh.GioHangs.Count" readonly>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+

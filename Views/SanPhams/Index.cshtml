@@ -1,0 +1,495 @@
+﻿@model PagedList.IPagedList<DoAn.Models.ProductViewModel>
+<link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
+@using System.Linq
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    List<DoAn.Models.HangSP> dshang = ViewBag.dsh;
+    List<int> spselected = (ViewBag.selectedBrands as int[])?.ToList() ?? new List<int>();
+
+}
+
+<main class="main">
+    <nav aria-label="breadcrumb" class="breadcrumb-nav mb-3">
+        <div class="container">
+            <ol class="breadcrumb">
+                @*<li class="breadcrumb-item"><a href="@Url.Action("Index", "Home")">Trang chủ</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Sản phẩm</li>*@
+                <li class="breadcrumb-item active" aria-current="page"></li>
+            </ol>
+        </div>
+    </nav>
+
+    <div class="page-content">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-9 col-xl-4-5col">
+                    <div class="products mb-3">
+                        <div class="row productlist">
+                            @foreach (var item in Model)
+                            {
+                                <div class="col-6 col-md-4 col-xl-3">
+                                    <div class="product">
+                                        <figure class="product-media">
+                                            @*<span class="product-label label-new">New</span>*@
+                                            @*<a href="@Url.Action("Details", "SanPhams", new { id = item.masp })">
+                                                    <img src="@Url.Content(item.hinhanh)" alt="@item.tensp" class="product-image">
+                                                </a>*@
+                                            <a href="~/SanPhams/Details/@item.Product.masp">
+                                                <img src="@Url.Content("~/wwwroot/images/" + item.Product.hinhanh)" alt="Product image" class="product-image">
+                                            </a>
+
+                                            <div class="product-action">
+                                                <button id="addcart" data-product-id="@item.Product.masp" class="btn-product btn-cart" title="Add to cart">
+                                                    <span>Thêm vào giỏ</span>
+                                                </button>
+                                            </div>
+                                        </figure>
+
+                                        <div class="product-body">
+                                            @*<h3 class="product-title">
+                                                    <a href="@Url.Action("Details", "SanPhams", new { id = item.masp })">@item.tensp</a>
+                                                </h3>*@
+                                            <h3 class="product-title"><a href="~/SanPhams/Details/@item.Product.masp">@item.Product.tensp</a></h3>
+                                            <div class="product-price">
+                                                @{
+                                                    decimal giaban = (decimal)item.Product.giaban;
+                                                    string formattedPrice = giaban.ToString("#,##0");
+                                                }
+                                                @formattedPrice đ
+                                            </div>
+                                            <div class="ratings-container">
+                                                <div class="ratings">
+                                                    <div class="ratings-val" style="width: @(item.AverageRating * 20)%"></div>
+                                                </div>
+                                                <span class="ratings-text">(@item.ReviewCount đánh giá)</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+
+                    <nav aria-label="Page navigation" class="text-center">
+                        <ul class="pagination">
+                            <li class="page-item @(Model.HasPreviousPage ? "" : "disabled")">
+                                <a class="page-link page-link-prev" href="@Url.Action("Index", new {
+                                    page = Model.PageNumber - 1,
+                                    brands = ViewBag.selectedBrands,
+                                    price = ViewBag.selectedPrice,
+                                    rating = ViewBag.selectedRating
+                                })" aria-label="Previous" tabindex="-1" aria-disabled="@(Model.HasPreviousPage ? "false" : "true")">
+                                    <span aria-hidden="true"><i class="icon-long-arrow-left"></i></span>Trang trước
+                                </a>
+                            </li>
+
+                            @for (int i = 1; i <= Model.PageCount; i++)
+                            {
+                                <li class="page-item @(i == Model.PageNumber ? "active" : "")" aria-current="page">
+                                    <a class="page-link" href="@Url.Action("Index", new {
+                                        page = i,
+                                        brands = ViewBag.selectedBrands,
+                                        price = ViewBag.selectedPrice,
+                                        rating = ViewBag.selectedRating
+                                    })">@i</a>
+                                </li>
+                            }
+
+                            <li class="page-item @(Model.HasNextPage ? "" : "disabled")">
+                                <a class="page-link page-link-next" href="@Url.Action("Index", new {
+                                    page = Model.PageNumber + 1,
+                                    brands = ViewBag.selectedBrands,
+                                    price = ViewBag.selectedPrice,
+                                    rating = ViewBag.selectedRating
+                                })" aria-label="Next">
+                                    Trang sau <span aria-hidden="true"><i class="icon-long-arrow-right"></i></span>
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+
+                <aside class="col-lg-3 col-xl-5col order-lg-first">
+                    <div class="sidebar sidebar-shop">
+                        @*<div class="widget widget-categories">
+                                <h3 class="widget-title">DANH MỤC</h3>
+
+                                <div class="widget-body">
+                                    <div class="accordion" id="widget-cat-acc">
+                                        @foreach (var hang in dshang)
+                                        {
+                                            <div class="accordion-item">
+                                                <div class="accordion-header">
+                                                    <a href="@Url.Action("DanhMuc", "Home", new { id = hang.mahang })" class="accordion-toggle">
+                                                        @hang.tenhang
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        }
+                                        <div class="acc-item">
+                                            <h5>
+                                                <a class="collapsed" role="button" data-toggle="collapse" href="#collapse-1" aria-expanded="false" aria-controls="collapse-2">
+                                                    Laptop
+                                                </a>
+                                            </h5>
+                                            <div id="collapse-1" class="collapse" data-parent="#widget-cat-acc">
+                                                <div class="collapse-wrap">
+                                                    <ul>
+                                                        <li><a href="#">Laptop Văn Phòng</a></li>
+                                                        <li><a href="#">Laptop Sinh Viên</a></li>
+                                                        <li><a href="#">Laptop Cho Lập Trình</a></li>
+                                                        <li><a href="#">Laptop Cho Kế Toán</a></li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="acc-item">
+                                            <h5>
+                                                <a class="collapsed" role="button" data-toggle="collapse" href="#collapse-2" aria-expanded="false" aria-controls="collapse-2">
+                                                    Linh Kiện Máy Tính
+                                                </a>
+                                            </h5>
+                                            <div id="collapse-2" class="collapse" data-parent="#widget-cat-acc">
+                                                <div class="collapse-wrap">
+                                                    <ul>
+                                                        <li><a href="#">CPU - Bộ Vi Xử Lý</a></li>
+                                                        <li><a href="#">VGA - Card Màn Hình</a></li>
+                                                        <li><a href="#">RAM - Bộ Nhớ Trong</a></li>
+                                                        <li><a href="#">HDD - Ổ Cứng</a></li>
+                                                        <li><a href="#">Case - Vỏ Máy Tính</a></li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="acc-item">
+                                            <h5>
+                                                <a class="collapsed" role="button" data-toggle="collapse" href="#collapse-3" aria-expanded="false" aria-controls="collapse-3">
+                                                    Thiết Bị Văn Phòng
+                                                </a>
+                                            </h5>
+                                            <div id="collapse-3" class="collapse" data-parent="#widget-cat-acc">
+                                                <div class="collapse-wrap">
+                                                    <ul>
+                                                        <li><a href="#">Máy In</a></li>
+                                                        <li><a href="#">Máy Scan</a></li>
+                                                        <li><a href="#">Máy Chiếu</a></li>
+                                                        <li><a href="#">Máy Hủy Tài Liệu</a></li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="acc-item">
+                                            <h5>
+                                                <a class="collapsed" role="button" data-toggle="collapse" href="#collapse-4" aria-expanded="false" aria-controls="collapse-4">
+                                                    Phụ Kiện
+                                                </a>
+                                            </h5>
+                                            <div id="collapse-4" class="collapse" data-parent="#widget-cat-acc">
+                                                <div class="collapse-wrap">
+                                                    <ul>
+                                                        <li><a href="#">Bộ Chia VGA</a></li>
+                                                        <li><a href="#">Bộ Chia HDMI</a></li>
+                                                        <li><a href="#">Giá Đỡ Laptop</a></li>
+                                                        <li><a href="#">Túi Chống Sốc</a></li>
+                                                        <li><a href="#">Đế Tản Nhiệt</a></li>
+                                                        <li><a href="#">Các Loại Dây Cap</a></li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>*@
+
+                        <div class="widget">
+                            <h3 class="widget-title">
+                                <a data-toggle="collapse" href="#widget-1" role="button" aria-expanded="true" aria-controls="widget-1">
+                                    Hãng Sản Xuất
+                                </a>
+                            </h3>
+
+                            <div class="collapse show" id="widget-1">
+                                <div class="widget-body">
+                                    <div class="filter-items filter-items-count" style="display: flex; flex-direction: column; gap: 10px; max-height: none;">
+                                        @foreach (var item in ViewBag.dsh)
+                                        {
+                                            <div class="filter-item" style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
+                                                <div class="custom-control custom-checkbox">
+                                                    <input type="checkbox" class="custom-control-input" id="brand-@item.mahang" name="brands" value="@item.mahang"
+                                                           @(ViewBag.selectedBrands != null && (spselected).Contains(item.mahang) ? "checked" : "") />
+                                                    <label class="custom-control-label" for="brand-@item.mahang">@item.tenhang</label>
+                                                </div>
+                                                <span class="item-count">@item.SanPhams.Count</span>
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="widget">
+                            <h3 class="widget-title">Giá Bán</h3>
+                            <form>
+                                <div class="widget-body">
+                                    <div class="filter-items">
+                                        <div class="filter-item">
+                                            <div class="custom-control custom-radio">
+                                                <input type="radio" class="custom-control-input" id="price-1" name="filter-price">
+                                                <label class="custom-control-label" for="price-1">Từ thấp đến cao</label>
+                                            </div>
+                                        </div>
+
+                                        <div class="filter-item">
+                                            <div class="custom-control custom-radio">
+                                                <input type="radio" class="custom-control-input" id="price-2" name="filter-price">
+                                                <label class="custom-control-label" for="price-2">Từ cao đến thấp</label>
+                                            </div>
+                                        </div>
+
+                                        <div class="filter-item">
+                                            <div class="custom-control custom-radio">
+                                                <input type="radio" class="custom-control-input" id="price-3" name="filter-price">
+                                                <label class="custom-control-label" for="price-3">Dười 10 triệu</label>
+                                            </div>
+                                        </div>
+
+                                        <div class="filter-item">
+                                            <div class="custom-control custom-radio">
+                                                <input type="radio" class="custom-control-input" id="price-4" name="filter-price">
+                                                <label class="custom-control-label" for="price-4">10 - 15 triệu</label>
+                                            </div>
+                                        </div>
+
+                                        <div class="filter-item">
+                                            <div class="custom-control custom-radio">
+                                                <input type="radio" class="custom-control-input" id="price-5" name="filter-price">
+                                                <label class="custom-control-label" for="price-5">15 - 20 triệu</label>
+                                            </div>
+                                        </div>
+
+                                        <div class="filter-item">
+                                            <div class="custom-control custom-radio">
+                                                <input type="radio" class="custom-control-input" id="price-6" name="filter-price">
+                                                <label class="custom-control-label" for="price-6">20 - 25 triệu</label>
+                                            </div>
+                                        </div>
+
+                                        <div class="filter-item">
+                                            <div class="custom-control custom-radio">
+                                                <input type="radio" class="custom-control-input" id="price-7" name="filter-price">
+                                                <label class="custom-control-label" for="price-7">trên 25 triệu</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+
+                        <div class="widget">
+                            <h3 class="widget-title">Đánh Giá</h3>
+                            <form>
+                                <div class="widget-body">
+                                    <div class="filter-items">
+                                        <div class="filter-item">
+                                            <div class="custom-control custom-radio">
+                                                <input type="radio" class="custom-control-input" id="rating-clear" name="ratings" value="">
+                                                <label class="custom-control-label" for="rating-clear">
+                                                    <span class="rating-text">Tất cả đánh giá</span>
+                                                </label>
+                                            </div>
+                                        </div>
+
+                                        <div class="filter-item">
+                                            <div class="custom-control custom-radio">
+                                                <input type="radio" class="custom-control-input" id="rating-5" name="ratings" value="5">
+                                                <label class="custom-control-label" for="rating-5">
+                                                    <span class="ratings-container">
+                                                        <span class="ratings">
+                                                            <span class="ratings-val" style="width: 100%;"></span>
+                                                        </span>
+                                                    </span>
+                                                </label>
+                                            </div>
+                                        </div>
+
+                                        <div class="filter-item">
+                                            <div class="custom-control custom-radio">
+                                                <input type="radio" class="custom-control-input" id="rating-4" name="ratings" value="4">
+                                                <label class="custom-control-label" for="rating-4">
+                                                    <span class="ratings-container">
+                                                        <span class="ratings">
+                                                            <span class="ratings-val" style="width: 80%;"></span>
+                                                        </span>
+                                                    </span>
+                                                </label>
+                                            </div>
+                                        </div>
+
+                                        <div class="filter-item">
+                                            <div class="custom-control custom-radio">
+                                                <input type="radio" class="custom-control-input" id="rating-3" name="ratings" value="3">
+                                                <label class="custom-control-label" for="rating-3">
+                                                    <span class="ratings-container">
+                                                        <span class="ratings">
+                                                            <span class="ratings-val" style="width: 60%;"></span>
+                                                        </span>
+                                                    </span>
+                                                </label>
+                                            </div>
+                                        </div>
+
+                                        <div class="filter-item">
+                                            <div class="custom-control custom-radio">
+                                                <input type="radio" class="custom-control-input" id="rating-2" name="ratings" value="2">
+                                                <label class="custom-control-label" for="rating-2">
+                                                    <span class="ratings-container">
+                                                        <span class="ratings">
+                                                            <span class="ratings-val" style="width: 40%;"></span>
+                                                        </span>
+                                                    </span>
+                                                </label>
+                                            </div>
+                                        </div>
+
+                                        <div class="filter-item">
+                                            <div class="custom-control custom-radio">
+                                                <input type="radio" class="custom-control-input" id="rating-1" name="ratings" value="1">
+                                                <label class="custom-control-label" for="rating-1">
+                                                    <span class="ratings-container">
+                                                        <span class="ratings">
+                                                            <span class="ratings-val" style="width: 20%;"></span>
+                                                        </span>
+                                                    </span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+
+                        @*<div class="widget widget-banner-sidebar">
+                                <h3 class="widget-title">Sản Phẩm Bán Chạy</h3>
+
+                                <div class="banner-sidebar banner-overlay">
+                                    <a href="#">
+                                        <img src="~/Content/assets/images/demos/demo-13/banners/banner-6.jpg" alt="banner">
+                                    </a>
+                                </div>
+                            </div>*@
+                    </div>
+                </aside>
+            </div>
+        </div>
+    </div>
+</main>
+
+<script>
+    $(document).ready(function() {
+        // Set initial values for checkboxes and radio buttons
+        var selectedBrands = @Html.Raw(Json.Encode(ViewBag.selectedBrands ?? new List<int>()));
+        var selectedPrice = '@ViewBag.selectedPrice';
+        var selectedRating = '@ViewBag.selectedRating';
+
+        // Reset all brand checkboxes first
+        $('input[name="brands"]').prop('checked', false);
+
+        // Then set only the selected ones
+        if (selectedBrands && selectedBrands.length > 0) {
+            selectedBrands.forEach(function(brandId) {
+                $('#brand-' + brandId).prop('checked', true);
+            });
+        }
+
+        if (selectedPrice) {
+            $('#' + selectedPrice).prop('checked', true);
+        }
+
+        // Set default rating to "Tất cả đánh giá" if no rating is selected
+        if (!selectedRating) {
+            $('#rating-clear').prop('checked', true);
+        } else {
+            $('#rating-' + selectedRating).prop('checked', true);
+        }
+
+        // Handle checkbox changes
+        $('input[name="brands"]').change(function() {
+            getProductsByFilter();
+        });
+
+        // Handle radio button changes
+        $('input[type="radio"]').change(function() {
+            getProductsByFilter();
+        });
+
+        function getProductsByFilter() {
+            var selectedBrands = [];
+            $('input[name="brands"]:checked').each(function() {
+                selectedBrands.push($(this).val());
+            });
+
+            var selectedPrice = $('input[name="filter-price"]:checked').attr('id');
+            var selectedRating = $('input[name="ratings"]:checked').val();
+
+            // Build URL with current parameters
+            var url = '@Url.Action("Index", "SanPhams")';
+            var params = [];
+
+            // Only add brands parameter if there are selected brands
+            if (selectedBrands.length > 0) {
+                selectedBrands.forEach(function(brand) {
+                    params.push('brands=' + brand);
+                });
+            }
+
+            if (selectedPrice) {
+                params.push('price=' + selectedPrice);
+            }
+            if (selectedRating) {
+                params.push('rating=' + selectedRating);
+            }
+
+            if (params.length > 0) {
+                url += '?' + params.join('&');
+            }
+
+            // Redirect to the new URL
+            window.location.href = url;
+        }
+
+        // Handle add to cart
+        $('.btn-cart').click(function() {
+            var productId = $(this).data('product-id');
+            $.ajax({
+                url: '@Url.Action("AddCart", "SanPhams")',
+                type: 'POST',
+                data: { id: productId },
+                success: function (result) {
+                    if (result.success && result.message == "T") {
+                        toastr.success("Thêm vào giỏ hàng thành công", "Thành Công");
+                        setTimeout(function () {
+                            location.reload();
+                        }, 1500);
+
+                    }
+                    else if (result.success && result.message == "F") {
+                        toastr.error("Thêm vào giỏ hàng không thành công", "Không thành Công");
+                    }
+                    else {
+                        window.location.href = '/Login/Index';
+                    }
+                },
+                error: function() {
+                    alert('Đã xảy ra lỗi!');
+                }
+            });
+        });
+    });
+</script>
+
+}

@@ -1,0 +1,222 @@
+﻿@model DoAn.Models.SanPham
+
+@{
+    ViewBag.Title = "Edit";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    var path = "~/wwwroot/images/" + Model.hinhanh;
+}
+
+
+
+@section naviheader{
+    <ul class="navbar-nav">
+        <li class="nav-item">
+            <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
+        </li>
+        <li class="nav-item d-none d-sm-inline-block">
+            <a href="/Admin/Home" class="nav-link">Trang chủ</a>
+        </li>
+        <li class="nav-item d-none d-sm-inline-block">
+            <a href="~/admin/sanphams" class="nav-link">Sản phẩm</a>
+        </li>
+        <li class="nav-item d-none d-sm-inline-block">
+            <a href="#" class="nav-link">Chỉnh sửa</a>
+        </li>
+    </ul>
+}
+
+<!-- Content Wrapper. Contains page content -->
+<!-- Content Header (Page header) -->
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                @*<h1>Thêm mới danh mục</h1>*@
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="~/admin/sanphams">Quản lý sản phẩm</a></li>
+                    <li class="breadcrumb-item active">Chỉnh sửa</li>
+                </ol>
+            </div>
+        </div>
+    </div><!-- /.container-fluid -->
+</section>
+
+<section class="content">
+    <!-- Default box -->
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">Thông tin sản phẩm chỉnh sửa</h3>
+        </div>
+        <div class="card-body">
+            <div class="bs-stepper-content">
+                @using (Html.BeginForm("Edit", "Sanphams", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                {
+                    @Html.AntiForgeryToken()
+
+                <div class="form-horizontal">
+                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                    @Html.HiddenFor(model => model.masp)
+                    <div class="form-group">
+                        <label for="exampleInputEmail1">Hãng sản phẩm</label>
+                        @Html.DropDownList("mahang", null, htmlAttributes: new { @class = "form-control" })
+                        @Html.ValidationMessageFor(model => model.mahang, "", new { @class = "text-danger" })
+                    </div>
+
+                    <div class="form-group">
+                        <label for="exampleInputEmail1">Tên sản phẩm</label>
+                        @Html.EditorFor(model => model.tensp, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.tensp, "", new { @class = "text-danger" })
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="exampleInputEmail1">Model sản phẩm</label>
+                        @Html.EditorFor(model => model.model, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.model, "", new { @class = "text-danger" })
+                    </div>
+
+                    <div class="form-group">
+                        <label for="exampleInputEmail1">Hình ảnh sản phẩm</label>
+                        <div class="row">
+                            <div class="col-md-2">
+                                <label>Hình ảnh chính</label>
+                                @Html.EditorFor(model => model.hinhanh, new { htmlAttributes = new { @class = "form-control d-none" } })
+                                <img id="output" class="img-thumbnail" src="@Url.Content("~/wwwroot/images/" + Model.hinhanh)" width="200" height="200" />
+                                <p><label for="ufile" style="cursor:pointer">Chọn hình ảnh</label></p>
+                                <input type="file" id="ufile" name="ImageUpload" style="display: none" onchange="loadImage(event)" />
+                            </div>
+                            <div class="col-md-2">
+                                <label>Hình ảnh phụ 1</label>
+                                @Html.EditorFor(model => model.hinhanh2, new { htmlAttributes = new { @class = "form-control d-none" } })
+                                <img id="output2" class="img-thumbnail" src="@Url.Content("~/wwwroot/images/" + Model.hinhanh2)" width="200" height="200" />
+                                <p><label for="ufile2" style="cursor:pointer">Chọn hình ảnh</label></p>
+                                <input type="file" id="ufile2" name="ImageUpload2" style="display: none" onchange="loadImage2(event)" />
+                            </div>
+                            <div class="col-md-2">
+                                <label>Hình ảnh phụ 2</label>
+                                @Html.EditorFor(model => model.hinhanh3, new { htmlAttributes = new { @class = "form-control d-none" } })
+                                <img id="output3" class="img-thumbnail" src="@Url.Content("~/wwwroot/images/" + Model.hinhanh3)" width="200" height="200" />
+                                <p><label for="ufile3" style="cursor:pointer">Chọn hình ảnh</label></p>
+                                <input type="file" id="ufile3" name="ImageUpload3" style="display: none" onchange="loadImage3(event)" />
+                            </div>
+                            <div class="col-md-2">
+                                <label>Hình ảnh phụ 3</label>
+                                @Html.EditorFor(model => model.hinhanh4, new { htmlAttributes = new { @class = "form-control d-none" } })
+                                <img id="output4" class="img-thumbnail" src="@Url.Content("~/wwwroot/images/" + Model.hinhanh4)" width="200" height="200" />
+                                <p><label for="ufile4" style="cursor:pointer">Chọn hình ảnh</label></p>
+                                <input type="file" id="ufile4" name="ImageUpload4" style="display: none" onchange="loadImage4(event)" />
+                            </div>
+                            <div class="col-md-2">
+                                <label>Hình ảnh phụ 4</label>
+                                @Html.EditorFor(model => model.hinhanh5, new { htmlAttributes = new { @class = "form-control d-none" } })
+                                <img id="output5" class="img-thumbnail" src="@Url.Content("~/wwwroot/images/" + Model.hinhanh5)" width="200" height="200" />
+                                <p><label for="ufile5" style="cursor:pointer">Chọn hình ảnh</label></p>
+                                <input type="file" id="ufile5" name="ImageUpload5" style="display: none" onchange="loadImage5(event)" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="exampleInputEmail1">Số lượng</label>
+                        @Html.EditorFor(model => model.soluong, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.soluong, "", new { @class = "text-danger" })
+                    </div>
+
+                    <div class="form-group">
+                        <label for="exampleInputEmail1">Giá bán</label>
+                        @Html.EditorFor(model => model.giaban, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.giaban, "", new { @class = "text-danger" })
+                    </div>
+
+                    <div class="form-group">
+                        <label for="exampleInputEmail1">Mô tả</label>
+                        @Html.EditorFor(model => model.mota, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.mota, "", new { @class = "text-danger" })
+                    </div>
+
+                    <div class="form-group">
+                        <label for="exampleInputEmail1">Bộ vi xử lý (CPU)</label>
+                        @Html.EditorFor(model => model.CPU, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.CPU, "", new { @class = "text-danger" })
+                    </div>
+
+                    <div class="form-group">
+                        <label for="exampleInputEmail1">RAM</label>
+                        @Html.EditorFor(model => model.RAM, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.RAM, "", new { @class = "text-danger" })
+                    </div>
+
+                    <div class="form-group">
+                        <label for="exampleInputEmail1">Hệ điều hành (OS)</label>
+                        @Html.EditorFor(model => model.OS, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.OS, "", new { @class = "text-danger" })
+                    </div>
+
+                    <div class="form-group">
+                        <label for="exampleInputEmail1">Màn Hình</label>
+                        @Html.EditorFor(model => model.manhinh, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.manhinh, "", new { @class = "text-danger" })
+                    </div>
+
+                    <div class="form-group">
+                        <label for="exampleInputEmail1">Card đồ họa (VGA)</label>
+                        @Html.EditorFor(model => model.carddohoa, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.carddohoa, "", new { @class = "text-danger" })
+                    </div>
+
+                    <div class="form-group">
+                        <label for="exampleInputEmail1">Dung lượng SSD</label>
+                        @Html.EditorFor(model => model.SSD, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.SSD, "", new { @class = "text-danger" })
+                    </div>
+
+                    <div class="form-group">
+                        <label for="exampleInputEmail1">Trạng thái</label>
+                        <div class="checkbox">
+                            @Html.DropDownListFor(model => model.trangthai, (IEnumerable<SelectListItem>)ViewBag.TrangThaiList,
+                                   htmlAttributes: new { @class = "form-control" })
+                            @Html.ValidationMessageFor(model => model.trangthai, "", new { @class = "text-danger" })
+                            @*@Html.EditorFor(model => model.trangthai, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.trangthai, "", new { @class = "text-danger" })*@
+                        </div>
+                    </div>
+                    <br />
+                    <div class="form-group">
+                        <input type="submit" value="Lưu" class="btn btn-primary" />
+                        <a href="/admin/sanphams" class="btn btn-danger">Quay lại</a>
+                    </div>
+                </div>
+                }
+            </div>
+            <!-- /.card-body -->
+            <div class="card-footer">
+
+            </div>
+            <!-- /.card-footer-->
+        </div>
+    </div>
+    <!-- /.card -->
+</section>
+<script>
+    var loadImage = function (event) {
+        var image = document.getElementById("output");
+        image.src = URL.createObjectURL(event.target.files[0]);
+    }
+    var loadImage2 = function (event) {
+        var image = document.getElementById("output2");
+        image.src = URL.createObjectURL(event.target.files[0]);
+    }
+    var loadImage3 = function (event) {
+        var image = document.getElementById("output3");
+        image.src = URL.createObjectURL(event.target.files[0]);
+    }
+    var loadImage4 = function (event) {
+        var image = document.getElementById("output4");
+        image.src = URL.createObjectURL(event.target.files[0]);
+    }
+    var loadImage5 = function (event) {
+        var image = document.getElementById("output5");
+        image.src = URL.createObjectURL(event.target.files[0]);
+    }
+</script>

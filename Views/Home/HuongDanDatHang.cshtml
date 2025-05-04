@@ -1,0 +1,134 @@
+@{
+    ViewBag.Title = "Hướng dẫn đặt hàng";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<main class="main">
+    <div class="container">
+        <div class="page-header page-header-big text-center" style="background-image: url('/Content/assets/images/contact-header-bg.jpg')">
+            <h1 class="page-title text-white">Hướng dẫn đặt hàng<span class="text-white">Các bước mua hàng tại NEOTECH Computer</span></h1>
+        </div><!-- End .page-header -->
+    </div><!-- End .container -->
+
+    <div class="page-content pb-0">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="guide-section">
+                        <h2 class="title mb-3">Các bước đặt hàng</h2>
+                        <div class="guide-steps">
+                            <div class="step">
+                                <h3>Bước 1: Tìm kiếm sản phẩm</h3>
+                                <p>Bạn có thể tìm kiếm sản phẩm theo nhiều cách:</p>
+                                <ul>
+                                    <li>Tìm kiếm trực tiếp trên thanh tìm kiếm</li>
+                                    <li>Lựa chọn theo danh mục sản phẩm</li>
+                                    <li>Lựa chọn theo hãng sản xuất</li>
+                                </ul>
+                            </div>
+
+                            <div class="step">
+                                <h3>Bước 2: Thêm sản phẩm vào giỏ hàng</h3>
+                                <p>Sau khi tìm được sản phẩm mong muốn:</p>
+                                <ul>
+                                    <li>Chọn số lượng sản phẩm</li>
+                                    <li>Nhấn nút "Thêm vào giỏ hàng"</li>
+                                    <li>Kiểm tra giỏ hàng để xác nhận sản phẩm</li>
+                                </ul>
+                            </div>
+
+                            <div class="step">
+                                <h3>Bước 3: Đăng nhập/Đăng ký tài khoản</h3>
+                                <p>Để tiếp tục quá trình mua hàng:</p>
+                                <ul>
+                                    <li>Nếu đã có tài khoản: Đăng nhập bằng email và mật khẩu</li>
+                                    <li>Nếu chưa có tài khoản: Đăng ký tài khoản mới</li>
+                                </ul>
+                            </div>
+
+                            <div class="step">
+                                <h3>Bước 4: Nhập thông tin giao hàng</h3>
+                                <p>Điền đầy đủ thông tin giao hàng:</p>
+                                <ul>
+                                    <li>Họ tên người nhận</li>
+                                    <li>Số điện thoại liên hệ</li>
+                                    <li>Địa chỉ giao hàng</li>
+                                    <li>Ghi chú (nếu có)</li>
+                                </ul>
+                            </div>
+
+                            <div class="step">
+                                <h3>Bước 5: Chọn phương thức thanh toán</h3>
+                                <p>Lựa chọn phương thức thanh toán phù hợp:</p>
+                                <ul>
+                                    <li>Thanh toán khi nhận hàng (COD)</li>
+                                    <li>Chuyển khoản ngân hàng</li>
+                                    <li>Thanh toán qua ví điện tử</li>
+                                </ul>
+                            </div>
+
+                            <div class="step">
+                                <h3>Bước 6: Xác nhận đơn hàng</h3>
+                                <p>Kiểm tra lại thông tin đơn hàng:</p>
+                                <ul>
+                                    <li>Thông tin sản phẩm</li>
+                                    <li>Thông tin giao hàng</li>
+                                    <li>Phương thức thanh toán</li>
+                                    <li>Nhấn nút "Đặt hàng" để hoàn tất</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <h2 class="title mb-3 mt-5">Lưu ý khi đặt hàng</h2>
+                        <div class="notes">
+                            <ul>
+                                <li>Vui lòng kiểm tra kỹ thông tin sản phẩm trước khi đặt hàng</li>
+                                <li>Đảm bảo thông tin giao hàng chính xác để tránh phát sinh chi phí</li>
+                                <li>Lưu ý thời gian giao hàng dự kiến</li>
+                                <li>Giữ lại hóa đơn mua hàng để đối chiếu khi cần</li>
+                            </ul>
+                        </div>
+
+                        <h2 class="title mb-3 mt-5">Hỗ trợ khách hàng</h2>
+                        <div class="support">
+                            <p>Nếu bạn cần hỗ trợ trong quá trình đặt hàng, vui lòng liên hệ:</p>
+                            <ul>
+                                <li>Hotline: 1900 0323</li>
+                                <li>Email: support@neotech.com.vn</li>
+                                <li>Chat trực tuyến với nhân viên tư vấn</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<style>
+    .guide-section {
+        padding: 30px 0;
+    }
+    .step {
+        margin-bottom: 30px;
+        padding: 20px;
+        background: #f8f8f8;
+        border-radius: 5px;
+    }
+    .step h3 {
+        color: #333;
+        margin-bottom: 15px;
+    }
+    .step ul {
+        padding-left: 20px;
+    }
+    .step li {
+        margin-bottom: 10px;
+    }
+    .notes, .support {
+        background: #f8f8f8;
+        padding: 20px;
+        border-radius: 5px;
+        margin-bottom: 20px;
+    }
+</style> 
