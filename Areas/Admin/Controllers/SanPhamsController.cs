@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
+using System.Data.Entity.Infrastructure;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -165,51 +166,166 @@ namespace DoAn.Areas.Admin.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "masp,mahang,tensp,hinhanh,soluong,giaban,mota,CPU,RAM,OS,manhinh,carddohoa,SSD,trangthai,model")] SanPham sanPham)
+        public ActionResult Edit([Bind(Include = "masp,mahang,tensp,soluong,giaban,mota,CPU,RAM,OS,manhinh,carddohoa,SSD,trangthai,model")] SanPham sanPhamFromForm)
         {
             try
             {
-                
-                if (ModelState.IsValid)
-                {   
-                    var file = Request.Files["ImageUpload"];
-                    if (file != null && file.ContentLength > 0)
-                    {
-                        // Nếu có ảnh mới được upload, xóa ảnh cũ nếu có
-                        if (!string.IsNullOrEmpty(sanPham.hinhanh))
-                        {
-                            string oldFilePath = Server.MapPath("~/wwwroot/images/" + sanPham.hinhanh);
-                            if (System.IO.File.Exists(oldFilePath))
-                            {
-                                System.IO.File.Delete(oldFilePath);
-                            }
-                        }
-                        
-                        // Lưu ảnh mới với tên duy nhất
-                        sanPham.hinhanh = ""; // Reset tên ảnh
-                        string originalFilename = Path.GetFileName(file.FileName);
-                        string fileExtension = Path.GetExtension(originalFilename);
-                        string newFilename = Guid.NewGuid().ToString() + fileExtension; // Tạo tên file mới duy nhất
-                        string filepath = Server.MapPath("~/wwwroot/images/" + newFilename);
-                        file.SaveAs(filepath);
-                        sanPham.hinhanh = newFilename; // Lưu tên file mới vào database
-                    }
-                    else
-                    {
-                        // Giữ lại ảnh cũ nếu không có ảnh mới được upload
-                        db.Entry(sanPham).Property(x => x.hinhanh).IsModified = false;
-                    }
-                    
-                    db.Entry(sanPham).State = EntityState.Modified;
-                    db.SaveChanges();
+                // Tải sản phẩm hiện có
+                var existingSanPham = db.SanPhams.Find(sanPhamFromForm.masp);
+                if (existingSanPham == null)
+                {
+                    return HttpNotFound();
                 }
-                return RedirectToAction("Index");
+
+                // Kiểm tra ModelState và cập nhật các thuộc tính *không phải file*
+                if (ModelState.IsValid)
+                {
+                    // Cập nhật các thuộc tính không phải ảnh từ form
+                    existingSanPham.mahang = sanPhamFromForm.mahang;
+                    existingSanPham.tensp = sanPhamFromForm.tensp;
+                    existingSanPham.soluong = sanPhamFromForm.soluong;
+                    existingSanPham.giaban = sanPhamFromForm.giaban;
+                    existingSanPham.mota = sanPhamFromForm.mota;
+                    existingSanPham.CPU = sanPhamFromForm.CPU;
+                    existingSanPham.RAM = sanPhamFromForm.RAM;
+                    existingSanPham.OS = sanPhamFromForm.OS;
+                    existingSanPham.manhinh = sanPhamFromForm.manhinh;
+                    existingSanPham.carddohoa = sanPhamFromForm.carddohoa;
+                    existingSanPham.SSD = sanPhamFromForm.SSD;
+                    existingSanPham.trangthai = sanPhamFromForm.trangthai;
+                    existingSanPham.model = sanPhamFromForm.model;
+                    // Xử lý upload nhiều file ảnh
+                    var files = Request.Files;
+                    if (files != null && files.Count > 0)
+                    {
+                        // Xử lý file hinhanh
+                        var file1 = files["ImageUpload"];
+                        if (file1 != null && file1.ContentLength > 0)
+                        {
+                            var fileName = Path.GetFileName(file1.FileName);
+                            var path = Path.Combine(Server.MapPath("~/wwwroot/images"), fileName);
+                            file1.SaveAs(path);
+                            existingSanPham.hinhanh = fileName;
+                        }
+
+                        // Xử lý file hinhanh2  
+                        var file2 = files["ImageUpload2"];
+                        if (file2 != null && file2.ContentLength > 0)
+                        {
+                            var fileName = Path.GetFileName(file2.FileName);
+                            var path = Path.Combine(Server.MapPath("~/wwwroot/images"), fileName);
+                            file2.SaveAs(path);
+                            existingSanPham.hinhanh2 = fileName;
+                        }
+
+                        // Xử lý file hinhanh3
+                        var file3 = files["ImageUpload3"];
+                        if (file3 != null && file3.ContentLength > 0)
+                        {
+                            var fileName = Path.GetFileName(file3.FileName);
+                            var path = Path.Combine(Server.MapPath("~/wwwroot/images"), fileName);
+                            file3.SaveAs(path);
+                            existingSanPham.hinhanh3 = fileName;
+                        }
+
+                        // Xử lý file hinhanh4
+                        var file4 = files["ImageUpload4"];
+                        if (file4 != null && file4.ContentLength > 0)
+                        {
+                            var fileName = Path.GetFileName(file4.FileName);
+                            var path = Path.Combine(Server.MapPath("~/wwwroot/images"), fileName);
+                            file4.SaveAs(path);
+                            existingSanPham.hinhanh4 = fileName;
+                        }
+
+                        // Xử lý file hinhanh5
+                        var file5 = files["ImageUpload5"]; 
+                        if (file5 != null && file5.ContentLength > 0)
+                        {
+                            var fileName = Path.GetFileName(file5.FileName);
+                            var path = Path.Combine(Server.MapPath("~/wwwroot/images"), fileName);
+                            file5.SaveAs(path);
+                            existingSanPham.hinhanh5 = fileName;
+                        }
+                    }
+
+                    // EF tự động theo dõi thay đổi trên existingSanPham
+                    db.SaveChanges();
+                    return RedirectToAction("Index");
+                }
+
+                // Nếu ModelState không hợp lệ
+                // Cần trả lại View với model `sanPhamFromForm`
+                // Các trường hình ảnh sẽ hiển thị giá trị hiện tại từ DB (vì chúng không được submit cùng form này)
+                // Ta cần lấy lại các giá trị hinhanh từ existingSanPham để hiển thị đúng
+                sanPhamFromForm.hinhanh = existingSanPham.hinhanh;
+                sanPhamFromForm.hinhanh2 = existingSanPham.hinhanh2;
+                sanPhamFromForm.hinhanh3 = existingSanPham.hinhanh3;
+                sanPhamFromForm.hinhanh4 = existingSanPham.hinhanh4;
+                sanPhamFromForm.hinhanh5 = existingSanPham.hinhanh5;
+
+                // Thiết lập lại ViewBag cần thiết cho view
+                ViewBag.mahang = new SelectList(db.HangSPs, "mahang", "tenhang", sanPhamFromForm.mahang);
+                List<SelectListItem> trangThaiList = new List<SelectListItem>
+                {
+                    new SelectListItem { Value = "true", Text = "Hiển thị" },
+                    new SelectListItem { Value = "false", Text = "Ẩn" }
+                };
+                ViewBag.TrangThaiList = trangThaiList;
+                ViewBag.Error = "Dữ liệu nhập không hợp lệ.";
+                return View(sanPhamFromForm);
+            }
+            catch (DbUpdateConcurrencyException ex)
+            {
+                // Xử lý lỗi tương tranh...
+                // (Giữ nguyên logic xử lý lỗi tương tranh)
+                var entry = ex.Entries.Single();
+                var clientValues = (SanPham)entry.Entity;
+                var databaseEntry = entry.GetDatabaseValues();
+                if (databaseEntry == null)
+                {
+                    ModelState.AddModelError(string.Empty, "Không thể lưu thay đổi. Sản phẩm đã bị xóa bởi người dùng khác.");
+                }
+                else
+                {
+                    var databaseValues = (SanPham)databaseEntry.ToObject();
+                    ModelState.AddModelError(string.Empty, "Sản phẩm bạn đang sửa đã bị thay đổi bởi người dùng khác. Vui lòng tải lại trang.");
+                    sanPhamFromForm = databaseValues; // Gán lại giá trị từ DB
+                }
+                ViewBag.Error = "Lỗi cập nhật dữ liệu (tương tranh). Vui lòng thử lại.";
+                 // Thiết lập lại ViewBag khi có lỗi tương tranh và trả về view
+                ViewBag.mahang = new SelectList(db.HangSPs, "mahang", "tenhang", sanPhamFromForm.mahang);
+                List<SelectListItem> trangThaiListConcurrency = new List<SelectListItem>
+                {
+                    new SelectListItem { Value = "true", Text = "Hiển thị" },
+                    new SelectListItem { Value = "false", Text = "Ẩn" }
+                };
+                ViewBag.TrangThaiList = trangThaiListConcurrency;
+                return View(sanPhamFromForm);
             }
             catch (Exception ex)
             {
-                ViewBag.Error = "Có lỗi nhập dữ liệu: " + ex.Message;
-                ViewBag.mahang = new SelectList(db.HangSPs, "mahang", "tenhang", sanPham.mahang);
-                return View(sanPham);
+                // Log lỗi ex...
+                ViewBag.Error = "Có lỗi hệ thống xảy ra trong quá trình cập nhật sản phẩm.";
+                // Nếu lỗi xảy ra trước khi load existingSanPham hoặc sau khi load
+                // Cố gắng gán lại ảnh gốc nếu có thể để hiển thị
+                 if (db.SanPhams.AsNoTracking().FirstOrDefault(p => p.masp == sanPhamFromForm.masp) is SanPham currentDbSanPham)
+                 {
+                    sanPhamFromForm.hinhanh = currentDbSanPham.hinhanh;
+                    sanPhamFromForm.hinhanh2 = currentDbSanPham.hinhanh2;
+                    sanPhamFromForm.hinhanh3 = currentDbSanPham.hinhanh3;
+                    sanPhamFromForm.hinhanh4 = currentDbSanPham.hinhanh4;
+                    sanPhamFromForm.hinhanh5 = currentDbSanPham.hinhanh5;
+                 }
+                // Thiết lập lại ViewBag khi có lỗi chung
+                ViewBag.mahang = new SelectList(db.HangSPs, "mahang", "tenhang", sanPhamFromForm.mahang);
+                List<SelectListItem> trangThaiListError = new List<SelectListItem>
+                {
+                    new SelectListItem { Value = "true", Text = "Hiển thị" },
+                    new SelectListItem { Value = "false", Text = "Ẩn" }
+                };
+                ViewBag.TrangThaiList = trangThaiListError;
+                return View(sanPhamFromForm);
             }
         }
 
