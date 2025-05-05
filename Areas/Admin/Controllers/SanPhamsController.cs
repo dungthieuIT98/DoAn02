@@ -82,37 +82,43 @@ namespace DoAn.Areas.Admin.Controllers
                     var mainImage = Request.Files["ImageUpload"];
                     if (mainImage != null && mainImage.ContentLength > 0)
                     {
-                        string filename = Path.GetFileName(mainImage.FileName);
-                        string filepath = Server.MapPath("~/wwwroot/images/" + filename);
+                        string originalFilename = Path.GetFileName(mainImage.FileName);
+                        string fileExtension = Path.GetExtension(originalFilename);
+                        string newFilename = Guid.NewGuid().ToString() + fileExtension; // Tạo tên file mới duy nhất
+                        string filepath = Server.MapPath("~/wwwroot/images/" + newFilename);
                         mainImage.SaveAs(filepath);
-                        sanPham.hinhanh = filename;
+                        sanPham.hinhanh = newFilename; // Lưu tên file mới vào database
                     }
 
                     // Handle additional images
                     int imageCount = 0;
-                    for (int i = 0; i < Request.Files.Count; i++)
+                    // Bắt đầu từ index 1 vì index 0 là ImageUpload (hình chính)
+                    for (int i = 1; i < Request.Files.Count; i++)
                     {
                         var file = Request.Files[i];
-                        if (file != null && file.ContentLength > 0 && imageCount < 4) // Limit to 4 additional images
+                        // Chỉ xử lý các file được đặt tên là "ImageUploadPhu"
+                        if (file != null && file.ContentLength > 0 && Request.Files.AllKeys[i].StartsWith("ImageUploadPhu") && imageCount < 4) // Limit to 4 additional images
                         {
-                            string filename = Path.GetFileName(file.FileName);
-                            string filepath = Server.MapPath("~/wwwroot/images/" + filename);
+                            string originalFilename = Path.GetFileName(file.FileName);
+                            string fileExtension = Path.GetExtension(originalFilename);
+                            string newFilename = Guid.NewGuid().ToString() + fileExtension; // Tạo tên file mới duy nhất
+                            string filepath = Server.MapPath("~/wwwroot/images/" + newFilename);
                             file.SaveAs(filepath);
-                            
+
                             // Assign to the appropriate property based on count
                             switch (imageCount)
                             {
                                 case 0:
-                                    sanPham.hinhanh2 = filename;
+                                    sanPham.hinhanh2 = newFilename;
                                     break;
                                 case 1:
-                                    sanPham.hinhanh3 = filename;
+                                    sanPham.hinhanh3 = newFilename;
                                     break;
                                 case 2:
-                                    sanPham.hinhanh4 = filename;
+                                    sanPham.hinhanh4 = newFilename;
                                     break;
                                 case 3:
-                                    sanPham.hinhanh5 = filename;
+                                    sanPham.hinhanh5 = newFilename;
                                     break;
                             }
                             imageCount++;
@@ -169,11 +175,29 @@ namespace DoAn.Areas.Admin.Controllers
                     var file = Request.Files["ImageUpload"];
                     if (file != null && file.ContentLength > 0)
                     {
-                        sanPham.hinhanh = "";
-                        string filename = Path.GetFileName(file.FileName);
-                        string filepath = Server.MapPath("~/wwwroot/images/" + filename);
+                        // Nếu có ảnh mới được upload, xóa ảnh cũ nếu có
+                        if (!string.IsNullOrEmpty(sanPham.hinhanh))
+                        {
+                            string oldFilePath = Server.MapPath("~/wwwroot/images/" + sanPham.hinhanh);
+                            if (System.IO.File.Exists(oldFilePath))
+                            {
+                                System.IO.File.Delete(oldFilePath);
+                            }
+                        }
+                        
+                        // Lưu ảnh mới với tên duy nhất
+                        sanPham.hinhanh = ""; // Reset tên ảnh
+                        string originalFilename = Path.GetFileName(file.FileName);
+                        string fileExtension = Path.GetExtension(originalFilename);
+                        string newFilename = Guid.NewGuid().ToString() + fileExtension; // Tạo tên file mới duy nhất
+                        string filepath = Server.MapPath("~/wwwroot/images/" + newFilename);
                         file.SaveAs(filepath);
-                        sanPham.hinhanh = filename;
+                        sanPham.hinhanh = newFilename; // Lưu tên file mới vào database
+                    }
+                    else
+                    {
+                        // Giữ lại ảnh cũ nếu không có ảnh mới được upload
+                        db.Entry(sanPham).Property(x => x.hinhanh).IsModified = false;
                     }
                     
                     db.Entry(sanPham).State = EntityState.Modified;
